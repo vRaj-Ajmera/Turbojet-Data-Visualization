@@ -3,8 +3,16 @@
 Welcome to the Turbojet Data Visualization project! This README will guide you through setting up your development environment and running the project.
 
 ## Table of Contents
-- Editing Instructions
-- Running Instructions
+- [File Structure](#file-structure)
+- [Editing Instructions](#editing-instructions)
+- [Running Instructions](#running-instructions)
+
+## File Structure
+
+- **main.py**: Main file to run the Turbojet Data Visualization project.
+- **gui/turbojet_gui.py**: GUI implementation for the Turbojet Engine Model.
+- **model/turbojet_model.py**: Contains the TurbojetModel class for performing calculations.
+- **utils/calculations.py**: Utility functions for mathematical calculations.
 
 ## Editing Instructions
 
@@ -19,6 +27,6 @@ To contribute to this project, follow these steps:
 
 To run the project:
 
-- **Run the Main File**: Start by running the main file. You can debug and test the project from there.
+- **Run the Main File**: Start by running the main file (main.py). You can debug and test the project from there.
 
 Happy coding!
