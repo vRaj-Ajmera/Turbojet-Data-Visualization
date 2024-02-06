@@ -24,4 +24,4 @@ def calculate_fuel_flow(power, efficiency):
     Returns:
     - float: Calculated fuel flow.
     """
-    return power * efficiency * 0.013  # Placeholder calculation, adjust as needed
+    return power * efficiency * 0.01 # Placeholder calculation, adjust as needed
