@@ -1,9 +1,9 @@
 Calculations for Modeling
 
-# Reference values for Temperature, Pressure, Density; 'ref' usually refers to sea level atmospheric conditions, 25C (298 K). The reference could be any point though.
+# Chapter 1, Mattingly Text: Reference values for Temperature, Pressure, Density; 'ref' usually refers to sea level atmospheric conditions, 25C (298 K). The reference could be any point though.
 Delta = P / Pref;  Theta = T / Tref;  lowercase_sigma = rho / rho_ref
 
-# Uninstalled Thrust of Engine
+# Chapter 1, Mattingly Text: Uninstalled Thrust of Engine
 F = (((m_dot_air + m_dot_fuel)*V_exit + (m_dot_air*V_intake)) / g_exit) + (P_exit - P_intake)*A_exit
 
 # I have more but I need to walk to class
