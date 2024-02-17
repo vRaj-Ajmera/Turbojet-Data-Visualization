@@ -1,35 +1,36 @@
 # VARIABLES:
-# eta = efficiency
-# eta_d = isentropic efficiency of diffusor
-# eta_r = portion of pi_d due to ram recovery
-# g = newton's constant
-# gamma = ratio of specific heats
-# h = enthalpy
-# P = pressure
-# pi = pressure ratio
-# pi_d = pressure ratio across diffusor
-# pi_dmax = portion of pi_d due to wall friction
-# pi_r = total/static pressure ratio of free stream
-# R = gas constant
-# s = entropy
-# T = temperature
-# tau = temperature ratio
-# tau_d = temperature ratio across diffusor
-# tau_n = temperature ratio across nozzle
-# tau_r = total/static temperature ratio of free stream
-# V = Velocity
+- eta: efficiency
+- eta_d: isentropic efficiency of diffusor
+- eta_r: portion of pi_d due to ram recovery
+- g: newton's constant
+- gamma: ratio of specific heats
+- h: enthalpy
+- P: pressure
+- pi: pressure ratio
+- pi_d: pressure ratio across diffusor
+- pi_dmax: portion of pi_d due to wall friction
+- pi_r: total/static pressure ratio of free stream
+- R: gas constant
+- s: entropy
+- T: temperature
+- tau: temperature ratio
+- tau_d: temperature ratio across diffusor
+- tau_n: temperature ratio across nozzle
+- tau_r: total/static temperature ratio of free stream
+- V: Velocity
 
-# A NOTE ON SUBSCRIPTING: Throughout the book, there are a series of subscripts which are used to denote location. These are not always intuitive,
-# so the following denotes the general subscript meanings for certain numbers:
-# 0 = Free Stream, Before Inlet
-# 2 = At Inlet, Before Compressor
-# 3 = After Compressor, Before Combustor
-# 4 = After Combustor, Before Turbine
-# 4.5 = After High-Pressure Turbines, Before Low-Pressure Turbines
-# 5 = After Turbines, Before Nozzle
-# 8 or 9 = After Nozzle
-# 13 (only Turbofan) = After Fan, Before Bypass Nozzle
-# 19 (only Turbofan) = After Bypass Nozzle
+# A NOTE ON SUBSCRIPTING:
+Throughout the book, there are a series of subscripts which are used to denote location. These are not always intuitive,
+so the following denotes the general subscript meanings for certain numbers:
+- 0: Free Stream, Before Inlet
+- 2: At Inlet, Before Compressor
+- 3: After Compressor, Before Combustor
+- 4: After Combustor, Before Turbine
+- 4.5: After High-Pressure Turbines, Before Low-Pressure Turbines
+- 5: After Turbines, Before Nozzle
+- 8 or 9: After Nozzle
+- 13 (only Turbofan): After Fan, Before Bypass Nozzle
+- 19 (only Turbofan): After Bypass Nozzle
 
 ## Inlet/Exit Modelling - Matthew Weippert
 
