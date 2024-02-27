@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from model.turbojet_model import TurbojetModel
-from utils.calculations import calculate_thrust, calculate_fuel_flow
+from utils.main_calculations import calculate_thrust, calculate_fuel_flow
 
 class TurbojetGUI:
     def __init__(self, root):

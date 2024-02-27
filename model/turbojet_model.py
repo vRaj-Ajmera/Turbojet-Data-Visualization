@@ -1,4 +1,4 @@
-from utils.calculations import calculate_thrust, calculate_fuel_flow
+from utils.main_calculations import calculate_thrust, calculate_fuel_flow
 
 class TurbojetModel:
     def __init__(self):
