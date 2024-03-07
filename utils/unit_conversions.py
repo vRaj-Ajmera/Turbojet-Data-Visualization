@@ -77,3 +77,17 @@ class UnitConversions:
         Convert degrees Rankine (°R) to Kelvin (K).
         """
         return R * 5 / 9
+    
+    @staticmethod
+    def meters_to_feet(m):
+        """
+        Convert meters (m) to feet (ft).
+        """
+        return m * 3.2808399
+    
+    @staticmethod
+    def feet_to_meters(f):
+        """
+        Convert feet (ft) to meters (m).
+        """
+        return f / 3.2808399
