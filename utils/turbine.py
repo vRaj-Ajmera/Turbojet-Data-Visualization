@@ -6,13 +6,12 @@ class TurbineModel:
     Class for modeling turbine behavior.
     """
 
-def TPV2h(t, p, v):
+def TVel2h_total(t, v):
     """
     Calculate the enthalpy of air at given temperature and pressure.
 
     Parameters:
         t (float): The temperature in Kelvin.
-        p (float): The pressure in Pascals.
         v (float): The air velocity magnitude in m/s.
 
     Returns:
@@ -21,8 +20,8 @@ def TPV2h(t, p, v):
     # Create a Solution object for air
     air = ct.Solution('air.yaml')
 
-    # Set the temperature and pressure
-    air.TP = temperature, pressure
+    # Set the temperature
+    air.TP = t, 1 #the pressure value does not effect the enthalpy calculation( set it to a defualt 1)
 
     # Calculate the enthalpy
     h = air.enthalpy_mass
