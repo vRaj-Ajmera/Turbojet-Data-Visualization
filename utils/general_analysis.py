@@ -21,10 +21,15 @@ class GeneralAnalysis:
         return numerator / delta_i
 
     # Calculating mass-flow parameter MFP
-    def massFlowParameter(m_ci, A_i, p_ref, T_ref):
+    def massFlowParameter_Simple(m_ci, A_i, p_ref, T_ref):
         numerator = m_ci * (T_ref**0.5)
         denominator = A_i * p_ref
         returm numerator/denominator
+
+    def massFlowParameter_Mach(M, gamma, g_c, R):
+        numerator = M*(((gamma*gc)/R)**0.5)
+        denominator = (1 + (((gamma - 1)/2)*M)**2)**((gamma + 1)/(2*(gamma - 1)))
+        return numerator/denominator
 
     # Corrected Engine Speed N_ci
     def corrEngineSpeed(N, theta_i):
@@ -57,7 +62,33 @@ class GeneralAnalysis:
         denominator = (T_4**0.5) * (R_4**0.5)
         return numerator/denominator
 
-    
+    # Corrected mass flow rate per unit area station 8
+    def calc_m8(p_8, A_8, T_8, M_8, gamma, g_c, R):
+        return (p_8 * A_8 * massFlowParameter_Mach(M_8, gamma, g_c, R))/(T_8**0.5)
 
-    
+    # Pressure ratio between stage 4 and stage 8 where eta_t is turbine efficiency
+    def pressureRatio4_8(T_4, T_8, eta_t, gamma_t):
+        return (1 - ((1 - (T_8/T_4))/turb_eff))**(gamma_t/(gamma_t - 1))
+
+    def temperatureRatio4_8(A_4, A_8, M_8, gamma, R, T_4, T_8, eta_t)
+        numerator = A_8 * massFlowParameter_Mach(M_8, gamma, g_c, R) * pressureRatio4_8(T_4, T_8, eta_t, gamma)
+        denominator = A_4 * (capitalEta(gamma)/(R**0.5))
+        return (numerator/denominator)**2
+
+    # Root of the temperature ratio as a function of Area, Mach number, and capital Eta
+    def tempPressTurbineRel(A_4, A_8, M_8, gamma, R)
+        numerator = A_8 * massFlowParameter_Mach(M_8, gamma, g_c, R)
+        denominator = A_4 * (capitalEta(gamma)/(R**0.5))
+        return numerator/denominator
+
+    # Calculate compressor pressure ratio
+    def compressorPressureRatio(T_4, theta_0, K, gamma_c):
+        return (1 + (T_4/theta_0)*K)**(gamma_c/(gamma_c - 1))
+
+    # Corrected mass flow rate through compressor
+    def corrMassFlowCompr(theta_0, T_4, K_1, K_2)
+        return ((theta_0/T_4)**0.5) * ((1 + (T_4/theta_0)*K_1)**(gamma_c/(gamma_c - 1))) * K_2
+
+
+        
 
