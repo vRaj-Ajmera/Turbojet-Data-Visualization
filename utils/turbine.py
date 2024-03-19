@@ -42,7 +42,7 @@ def calculate_power(massdot, h4, h5):
     """
     return massdot * (h4 - h5)
 
-def compressor_power(power_out_turbine, n_m=0.95):     #the efficiency paramater in the book is given as .95
+def compressor_power(power_out_turbine, n_m=0.95):     #the efficiency paramater in the Farokhi book is given as .95
     """
     Calculates the power delivered to the compressor based on the efficiency parameter
     and the power output of the turbine.
