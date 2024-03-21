@@ -16,8 +16,8 @@ class GeneralAnalysis:
 
     # Start with outputs and work backwards
 
-    def TSFC(a_0, g_c, f, V_9, M_0, R_t, R_c, T_9, T_0, P_0, P_9, gamma_c):
-        return (a_0/g_c)*(((1 + f)*(V_9/a_0)) - M_0 + ((1 + f)*(R_t/R_c)*((T_9/T_0)/(V_9/a_0))*((1 - (P_0/P_9))/gamma_c)))
+    def TSFC(a_0, g_c, f, V9a0Rat, M_0, R_t, R_c, T_9, T_0, P_0, P_9, gamma_c):
+        return (a_0/g_c)*(((1 + f)*(V9a0Rat)) - M_0 + ((1 + f)*(R_t/R_c)*((T_9/T_0)/(V9a0Rat))*((1 - (P_0/P_9))/gamma_c)))
 
     def thrust(tsfc, m_dot):
         return tsfc*m_dot
@@ -25,8 +25,8 @@ class GeneralAnalysis:
     def S(tsfc, f):
         return (f/tsfc)
 
-    def eta_T(a_0, f, V_9, M_0, g_c, h_pR):
-        numerator = (a_0**2)*(((1 + f)*((V_9/a_0)**2)) - (M_0**2))
+    def eta_T(a_0, f, V9a0Rat, M_0, g_c, h_pR):
+        numerator = (a_0**2)*(((1 + f)*((V9a0Rat)**2)) - (M_0**2))
         denominator = 2*g_c*f*h_pR
         return numerator / denominator
 
@@ -105,7 +105,7 @@ class GeneralAnalysis:
 
     # Combine all of them to make complete equations from clear independent variables
 
-    def calculateTSFC(M_0, T_0, P_0, T_t4, P_9, g_c, gamma_c, c_pc, gamma_t, c_pt, pi_d_max, tau_cR, T_t4R, tau_rR, eta_c, h_pR, eta_b):
+    def calculateTSFC(M_0, T_0, P_0, T_t4, P_9, g_c, gamma_c, c_pc, gamma_t, c_pt, pi_d_max, tau_cR, T_t4R, tau_rR, eta_c, h_pR, eta_b, m_dot_R, P_0R, pi_rR, pi_cR, pi_b, pi_t, pi_n, tau_t):
         # Calculate R_c ad R_t
         R_c = calc_R_c(gamma_c, c_pc)
         R_t = calc_R_t(gamma_t, c_pt)
@@ -125,6 +125,208 @@ class GeneralAnalysis:
 
         # Calculate f
         f = calc_f(tau_lambda, tau_r, tau_c, h_pR, eta_b, c_p, T_0)
+
+        # Calculate m_dot
+        m_dot = calc_m_dot(m_dot_R, P_0, pi_r, pi_d, pi_c, P_0R, pi_rR, pi_dR, pi_cR, T_t4, T_t4R)
+
+        # Intermediary Step
+        P9rat = calc_P9Rat(P_0, P_9, pi_r, pi_d, pi_c, pi_b, pi_t, pi_n)
+
+        # Calculate M_9
+        M_9 = calc_M_9(gamma_t, P9rat, tau_t)
+
+        # Calculate Temperature Ratio
+        T9T0Rat = calc_T9T0Rat(T_t4, tau_t, P9rat, gamma_t)
+
+        # Calculate V_0/a_0
+        V9a0Rat = calc_V0a0Rat(M_9, gamma_t, R_t, (T9T0Rat*T_0), gamma_c, R_c, T_0)
+
+        # Finally, Calculate TSFC
+        tsfc = TSFC(a_0, g_c, f, V9a0Rat, M_0, R_t, R_c, T_9, T_0, P_0, P_9, gamma_c)
+        return tsfc
+
+
+    def calculateThrust(M_0, T_0, P_0, T_t4, P_9, g_c, gamma_c, c_pc, gamma_t, c_pt, pi_d_max, tau_cR, T_t4R, tau_rR, eta_c, h_pR, eta_b, m_dot_R, P_0R, pi_rR, pi_cR, pi_b, pi_t, pi_n, tau_t):
+        # Calculate R_c ad R_t
+        R_c = calc_R_c(gamma_c, c_pc)
+        R_t = calc_R_t(gamma_t, c_pt)
+
+        # Calculate a_0
+        a_0 = calc_a_0(gamma_c, R_c, g_c, T_0)
+
+        # Calculate various pressure ratios and efficiencies needed later
+        tau_r = calc_tau_r(gamma_c, M_0)
+        pi_r = calc_pi_r(tau_r, gamma_c)
+        eta_r = calc_eta_r(M_0)
+        pi_d = calc_pi_d(pi_d_max, eta_r)
+        T_t2 = calc_T_t2(T_0, tau_r)
+        tau_c = calc_tau_c(tau_cR, T_t4, T_t2, T_t4R, calc_T_t2(T_0, tau_rR))
+        pi_c = calc_pi_c(eta_c, tau_c, gamma_c)
+        tau_lambda = calc_tau_lambda(c_pt, T_t4, c_pc, T_0)
+
+        # Calculate f
+        f = calc_f(tau_lambda, tau_r, tau_c, h_pR, eta_b, c_p, T_0)
+
+        # Calculate m_dot
+        m_dot = calc_m_dot(m_dot_R, P_0, pi_r, pi_d, pi_c, P_0R, pi_rR, pi_dR, pi_cR, T_t4, T_t4R)
+
+        # Intermediary Step
+        P9rat = calc_P9Rat(P_0, P_9, pi_r, pi_d, pi_c, pi_b, pi_t, pi_n)
+
+        # Calculate M_9
+        M_9 = calc_M_9(gamma_t, P9rat, tau_t)
+
+        # Calculate Temperature Ratio
+        T9T0Rat = calc_T9T0Rat(T_t4, tau_t, P9rat, gamma_t)
+
+        # Calculate V_0/a_0
+        V9a0Rat = calc_V0a0Rat(M_9, gamma_t, R_t, (T9T0Rat*T_0), gamma_c, R_c, T_0)
+
+        # Finally, Calculate TSFC
+        tsfc = TSFC(a_0, g_c, f, V9a0Rat, M_0, R_t, R_c, T_9, T_0, P_0, P_9, gamma_c)
+        thrust = thrust(tsfc, m_dot)
+        return thrust
+
+    def calculateUninstalledTSFC(M_0, T_0, P_0, T_t4, P_9, g_c, gamma_c, c_pc, gamma_t, c_pt, pi_d_max, tau_cR, T_t4R, tau_rR, eta_c, h_pR, eta_b, m_dot_R, P_0R, pi_rR, pi_cR, pi_b, pi_t, pi_n, tau_t):
+        # Calculate R_c ad R_t
+        R_c = calc_R_c(gamma_c, c_pc)
+        R_t = calc_R_t(gamma_t, c_pt)
+
+        # Calculate a_0
+        a_0 = calc_a_0(gamma_c, R_c, g_c, T_0)
+
+        # Calculate various pressure ratios and efficiencies needed later
+        tau_r = calc_tau_r(gamma_c, M_0)
+        pi_r = calc_pi_r(tau_r, gamma_c)
+        eta_r = calc_eta_r(M_0)
+        pi_d = calc_pi_d(pi_d_max, eta_r)
+        T_t2 = calc_T_t2(T_0, tau_r)
+        tau_c = calc_tau_c(tau_cR, T_t4, T_t2, T_t4R, calc_T_t2(T_0, tau_rR))
+        pi_c = calc_pi_c(eta_c, tau_c, gamma_c)
+        tau_lambda = calc_tau_lambda(c_pt, T_t4, c_pc, T_0)
+
+        # Calculate f
+        f = calc_f(tau_lambda, tau_r, tau_c, h_pR, eta_b, c_p, T_0)
+
+        # Calculate m_dot
+        m_dot = calc_m_dot(m_dot_R, P_0, pi_r, pi_d, pi_c, P_0R, pi_rR, pi_dR, pi_cR, T_t4, T_t4R)
+
+        # Intermediary Step
+        P9rat = calc_P9Rat(P_0, P_9, pi_r, pi_d, pi_c, pi_b, pi_t, pi_n)
+
+        # Calculate M_9
+        M_9 = calc_M_9(gamma_t, P9rat, tau_t)
+
+        # Calculate Temperature Ratio
+        T9T0Rat = calc_T9T0Rat(T_t4, tau_t, P9rat, gamma_t)
+
+        # Calculate V_0/a_0
+        V9a0Rat = calc_V0a0Rat(M_9, gamma_t, R_t, (T9T0Rat*T_0), gamma_c, R_c, T_0)
+
+        # Finally, Calculate TSFC
+        tsfc = TSFC(a_0, g_c, f, V9a0Rat, M_0, R_t, R_c, T_9, T_0, P_0, P_9, gamma_c)
+        S = S(tsfc, f)
+        return S
+    
+    def calculateTemperatureEfficiency(M_0, T_0, P_0, T_t4, P_9, g_c, gamma_c, c_pc, gamma_t, c_pt, pi_d_max, tau_cR, T_t4R, tau_rR, eta_c, h_pR, eta_b, m_dot_R, P_0R, pi_rR, pi_cR, pi_b, pi_t, pi_n, tau_t):
+        # Calculate R_c ad R_t
+        R_c = calc_R_c(gamma_c, c_pc)
+        R_t = calc_R_t(gamma_t, c_pt)
+
+        # Calculate a_0
+        a_0 = calc_a_0(gamma_c, R_c, g_c, T_0)
+
+        # Calculate various pressure ratios and efficiencies needed later
+        tau_r = calc_tau_r(gamma_c, M_0)
+        pi_r = calc_pi_r(tau_r, gamma_c)
+        eta_r = calc_eta_r(M_0)
+        pi_d = calc_pi_d(pi_d_max, eta_r)
+        T_t2 = calc_T_t2(T_0, tau_r)
+        tau_c = calc_tau_c(tau_cR, T_t4, T_t2, T_t4R, calc_T_t2(T_0, tau_rR))
+        pi_c = calc_pi_c(eta_c, tau_c, gamma_c)
+        tau_lambda = calc_tau_lambda(c_pt, T_t4, c_pc, T_0)
+
+        # Calculate f
+        f = calc_f(tau_lambda, tau_r, tau_c, h_pR, eta_b, c_p, T_0)
+
+        # Calculate m_dot
+        m_dot = calc_m_dot(m_dot_R, P_0, pi_r, pi_d, pi_c, P_0R, pi_rR, pi_dR, pi_cR, T_t4, T_t4R)
+
+        # Intermediary Step
+        P9rat = calc_P9Rat(P_0, P_9, pi_r, pi_d, pi_c, pi_b, pi_t, pi_n)
+
+        # Calculate M_9
+        M_9 = calc_M_9(gamma_t, P9rat, tau_t)
+
+        # Calculate Temperature Ratio
+        T9T0Rat = calc_T9T0Rat(T_t4, tau_t, P9rat, gamma_t)
+
+        # Calculate V_0/a_0
+        V9a0Rat = calc_V0a0Rat(M_9, gamma_t, R_t, (T9T0Rat*T_0), gamma_c, R_c, T_0)
+
+        eta_T = eta_T(a_0, f, V9a0Rat, M_0, g_c, h_pR)
+        return eta_T
+
+    def calculatePressureEfficiency(M_0, T_0, P_0, T_t4, P_9, g_c, gamma_c, c_pc, gamma_t, c_pt, pi_d_max, tau_cR, T_t4R, tau_rR, eta_c, h_pR, eta_b, m_dot_R, P_0R, pi_rR, pi_cR, pi_b, pi_t, pi_n, tau_t):
+        # Calculate R_c ad R_t
+        R_c = calc_R_c(gamma_c, c_pc)
+        R_t = calc_R_t(gamma_t, c_pt)
+
+        # Calculate a_0
+        a_0 = calc_a_0(gamma_c, R_c, g_c, T_0)
+
+        # Calculate various pressure ratios and efficiencies needed later
+        tau_r = calc_tau_r(gamma_c, M_0)
+        pi_r = calc_pi_r(tau_r, gamma_c)
+        eta_r = calc_eta_r(M_0)
+        pi_d = calc_pi_d(pi_d_max, eta_r)
+        T_t2 = calc_T_t2(T_0, tau_r)
+        tau_c = calc_tau_c(tau_cR, T_t4, T_t2, T_t4R, calc_T_t2(T_0, tau_rR))
+        pi_c = calc_pi_c(eta_c, tau_c, gamma_c)
+        tau_lambda = calc_tau_lambda(c_pt, T_t4, c_pc, T_0)
+
+        # Calculate f
+        f = calc_f(tau_lambda, tau_r, tau_c, h_pR, eta_b, c_p, T_0)
+
+        # Calculate m_dot
+        m_dot = calc_m_dot(m_dot_R, P_0, pi_r, pi_d, pi_c, P_0R, pi_rR, pi_dR, pi_cR, T_t4, T_t4R)
+
+        # Intermediary Step
+        P9rat = calc_P9Rat(P_0, P_9, pi_r, pi_d, pi_c, pi_b, pi_t, pi_n)
+
+        # Calculate M_9
+        M_9 = calc_M_9(gamma_t, P9rat, tau_t)
+
+        # Calculate Temperature Ratio
+        T9T0Rat = calc_T9T0Rat(T_t4, tau_t, P9rat, gamma_t)
+
+        # Calculate V_0/a_0
+        V9a0Rat = calc_V0a0Rat(M_9, gamma_t, R_t, (T9T0Rat*T_0), gamma_c, R_c, T_0)
+
+        # Finally, Calculate TSFC
+        tsfc = TSFC(a_0, g_c, f, V9a0Rat, M_0, R_t, R_c, T_9, T_0, P_0, P_9, gamma_c)
+        eta_P = eta_P(a_0, f, V_0, M_0, g_c, tsfc)
+        return eta_P
+
+    def calculateOverallEfficiency(eta_T, eta_P):
+        return eta_T*eta_P
+
+    def calculateRPM(N_R, T_0, T_0R, gamma_c, gamma_t, c_pc, c_pt, g_c, M_0, pi_d_max, tau_cR, T_t4, T_t4R, tau_rR, eta_c):
+        # Calculate R_c ad R_t
+        R_c = calc_R_c(gamma_c, c_pc)
+        R_t = calc_R_t(gamma_t, c_pt)
+
+        # Calculate a_0
+        a_0 = calc_a_0(gamma_c, R_c, g_c, T_0)
+
+        # Calculate various pressure ratios and efficiencies needed later
+        tau_r = calc_tau_r(gamma_c, M_0)
+        pi_r = calc_pi_r(tau_r, gamma_c)
+        eta_r = calc_eta_r(M_0)
+        pi_d = calc_pi_d(pi_d_max, eta_r)
+        T_t2 = calc_T_t2(T_0, tau_r)
+        tau_c = calc_tau_c(tau_cR, T_t4, T_t2, T_t4R, calc_T_t2(T_0, tau_rR))
+        pi_c = calc_pi_c(eta_c, tau_c, gamma_c)
         
-        # Finally plug everything in
-        tsfc = TSFC(a_0, g_c, f, V_9, M_0, R_t, R_c, T_9, T_0, P_0, P_9, gamma_c)
+        n_div_nr = n_over_nr(T_0, tau_r, pi_c, gamma_t, T_0R, tau_rR, pi_cR)
+        return n_div_nr * N_R
