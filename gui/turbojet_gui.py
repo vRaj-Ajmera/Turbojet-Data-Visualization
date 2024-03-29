@@ -2,85 +2,140 @@ import tkinter as tk
 import matplotlib.pyplot as plt
 from tkinter import messagebox
 from model.turbojet_model import TurbojetModel
-from utils.unit_conversions import UnitConversions
 
 class TurbojetGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Turbojet Engine Model")
-        self.root.geometry("700x550")
+        self.root.geometry("750x550")
 
-        # Example GUI initialization code
-        self.label_throttle = tk.Label(self.root, text="Throttle (0-1.0):")
-        self.entry_throttle = tk.Entry(self.root)
-        self.label_efficiency = tk.Label(self.root, text="Efficiency Factor (0-1.0):")
-        self.entry_efficiency = tk.Entry(self.root)
-        self.label_power = tk.Label(self.root, text="Power (kW):")
-        self.entry_power = tk.Entry(self.root)
+        # Labels and Entries for input parameters
+        self.label_M_0 = tk.Label(self.root, text="Low Mach Number:")
+        self.entry_M_0 = tk.Entry(self.root, width=10)
+        self.label_M_1 = tk.Label(self.root, text="High Mach Number:")
+        self.entry_M_1 = tk.Entry(self.root, width=10)
+        self.label_T_0 = tk.Label(self.root, text="Total Temperature:")
+        self.entry_T_0 = tk.Entry(self.root, width=10)
+        self.entry_T_0_unit = tk.StringVar()
+        self.entry_T_0_unit.set("K")
+        self.dropdown_T_0_unit = tk.OptionMenu(self.root, self.entry_T_0_unit, "K", "C", "F")
+        self.label_P_0 = tk.Label(self.root, text="Total Pressure:")
+        self.entry_P_0 = tk.Entry(self.root, width=10)
+        self.entry_P_0_unit = tk.StringVar()
+        self.entry_P_0_unit.set("kPa")
+        self.dropdown_P_0_unit = tk.OptionMenu(self.root, self.entry_P_0_unit, "kPa", "Pa", "atm")
+        self.label_T_t4 = tk.Label(self.root, text="Turbine Inlet Temperature:")
+        self.entry_T_t4 = tk.Entry(self.root, width=10)
+        self.entry_T_t4_unit = tk.StringVar()
+        self.entry_T_t4_unit.set("K")
+        self.dropdown_T_t4_unit = tk.OptionMenu(self.root, self.entry_T_t4_unit, "K", "C", "F")
+        self.label_P9rat = tk.Label(self.root, text="Exit Pressure Ratio:")
+        self.entry_P9rat = tk.Entry(self.root, width=10)
 
-        self.label_altitude_range = tk.Label(self.root, text="Altitude Range:")
-        self.entry_altitude_min = tk.Entry(self.root)
-        self.entry_altitude_max = tk.Entry(self.root)
-        self.altitude_unit = tk.StringVar(self.root)
-        self.altitude_unit.set("Feet")  # Default unit selection
-        self.altitude_unit_menu = tk.OptionMenu(self.root, self.altitude_unit, "Feet", "Meters")
-
+        # Button to trigger calculation and plotting
         self.calculate_button = tk.Button(self.root, text="Calculate", command=self.calculate_and_display)
 
+        # Button to clear calculation text boxes (Clear Inputs)
+        self.clear_button = tk.Button(self.root, text="Clear Inputs", command=self.clear_inputs)
+
+        # Button to fill default values in the empty boxes (Use Default Inputs)
+        self.default_button = tk.Button(self.root, text="Use Default Inputs", command=self.fill_default_inputs)
+
+        # Output label
         self.output_label = tk.Label(self.root, text="Results will be displayed here.")
 
         # Place widgets using grid layout
-        self.label_throttle.grid(row=0, column=0, padx=10, pady=5, sticky=tk.E)
-        self.entry_throttle.grid(row=0, column=1, padx=10, pady=5)
-        self.label_efficiency.grid(row=1, column=0, padx=10, pady=5, sticky=tk.E)
-        self.entry_efficiency.grid(row=1, column=1, padx=10, pady=5)
-        self.label_power.grid(row=2, column=0, padx=10, pady=5, sticky=tk.E)
-        self.entry_power.grid(row=2, column=1, padx=10, pady=5)
-        self.label_altitude_range.grid(row=3, column=0, padx=10, pady=5, sticky=tk.E)
-        self.entry_altitude_min.grid(row=3, column=1, padx=5, pady=5)
-        self.entry_altitude_max.grid(row=3, column=2, padx=5, pady=5)
-        self.altitude_unit_menu.grid(row=3, column=3, padx=5, pady=5)
-        self.calculate_button.grid(row=4, column=0, columnspan=2, pady=10)
-        self.output_label.grid(row=5, column=0, columnspan=2, pady=10)
+        self.label_M_0.grid(row=0, column=0, padx=10, pady=5, sticky=tk.E)
+        self.entry_M_0.grid(row=0, column=1, padx=5, pady=5)
+        self.label_M_1.grid(row=0, column=2, padx=10, pady=5, sticky=tk.E)
+        self.entry_M_1.grid(row=0, column=3, padx=5, pady=5)
+        self.label_T_0.grid(row=1, column=0, padx=10, pady=5, sticky=tk.E)
+        self.entry_T_0.grid(row=1, column=1, padx=5, pady=5)
+        self.dropdown_T_0_unit.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+        self.label_P_0.grid(row=2, column=0, padx=10, pady=5, sticky=tk.E)
+        self.entry_P_0.grid(row=2, column=1, padx=5, pady=5)
+        self.dropdown_P_0_unit.grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
+        self.label_T_t4.grid(row=3, column=0, padx=10, pady=5, sticky=tk.E)
+        self.entry_T_t4.grid(row=3, column=1, padx=5, pady=5)
+        self.dropdown_T_t4_unit.grid(row=3, column=2, padx=5, pady=5, sticky=tk.W)
+        self.label_P9rat.grid(row=4, column=0, padx=10, pady=5, sticky=tk.E)
+        self.entry_P9rat.grid(row=4, column=1, padx=5, pady=5)
+        self.calculate_button.grid(row=5, column=0, columnspan=2, pady=10)
+        self.clear_button.grid(row=5, column=2, pady=10)
+        self.default_button.grid(row=5, column=3, pady=10)
+        self.output_label.grid(row=6, column=0, columnspan=4, pady=10)
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def calculate_and_display(self):
-        # Get input values from the GUI
-        throttle = float(self.entry_throttle.get()) if self.entry_throttle.get() else 0.0
-        efficiency = float(self.entry_efficiency.get()) if self.entry_efficiency.get() else 0.0
-        power = float(self.entry_power.get()) if self.entry_power.get() else 0.0
-        altitude_min = float(self.entry_altitude_min.get()) if self.entry_altitude_min.get() else 0.0
-        altitude_max = float(self.entry_altitude_max.get()) if self.entry_altitude_max.get() else 0.0
-        altitude_unit = self.altitude_unit.get()
+        self.fill_default_inputs()
 
-        # Convert altitude to feet if in meters
-        #if altitude_unit == "Meters":
-            #altitude_min = UnitConversions.meters_to_feet(altitude_min)
-            #altitude_max = UnitConversions.meters_to_feet(altitude_max)
+        # Retrieve input values from the GUI after filling default values
+        M_0 = float(self.entry_M_0.get())
+        M_1 = float(self.entry_M_1.get())
+        T_0 = float(self.entry_T_0.get())
+        P_0 = float(self.entry_P_0.get())
+        T_t4 = float(self.entry_T_t4.get())
+        P9rat = float(self.entry_P9rat.get())
 
-        # Generate altitude range
-        altitude_range = range(int(altitude_min), int(altitude_max) + 1)
+        # Calculate results
+        inputs = {'M_0': M_0, 'M_1': M_1, 'T_0': T_0, 'P_0': P_0, 'T_t4': T_t4, 'P9rat': P9rat}
+        model = TurbojetModel(**inputs)
+        mach_vals, thrust_vals, tsfc_vals = model.calculate()
 
-        # Calculate mass flow at each altitude point
-        model = TurbojetModel()
-        results = model.calculate({'throttle': throttle, 'efficiency': efficiency, 'power': power})
-        mass_flows = [results['Fuel Flow']] * len(altitude_range)
+        # Plotting
+        plt.figure(figsize=(12, 6))
 
-        # Plot mass flow vs altitude
-        plt.plot(altitude_range, mass_flows)
-        plt.xlabel('Altitude (meters)' if altitude_unit == 'Meters' else 'Altitude (feet)')
-        plt.ylabel('Mass Flow (kg/s)')
-        plt.title('Mass Flow vs Altitude')
-        plt.grid(True)
+        # Plot Mach number vs Thrust
+        plt.subplot(1, 2, 1)
+        plt.plot(mach_vals, thrust_vals)
+        plt.xlabel('Mach Number')
+        plt.ylabel('Thrust (N)')
+        plt.title('Thrust vs Mach Number')
+
+        # Plot Mach number vs RPM
+        plt.subplot(1, 2, 2)
+        plt.plot(mach_vals, tsfc_vals)
+        plt.xlabel('Mach Number')
+        plt.ylabel('TSFC (kg kN$^{-1}$ hr$^{-1}$)')
+        plt.title('Thrust Specific Fuel Consumption vs Mach Number')
+
+        plt.tight_layout()
         plt.show()
+
+    def clear_inputs(self):
+        # Clear all input fields
+        self.entry_M_0.delete(0, tk.END)
+        self.entry_M_1.delete(0, tk.END)
+        self.entry_T_0.delete(0, tk.END)
+        self.entry_P_0.delete(0, tk.END)
+        self.entry_T_t4.delete(0, tk.END)
+        self.entry_P9rat.delete(0, tk.END)
+
+    def fill_default_inputs(self):
+        # Fill empty input fields with default values and set corresponding dropdowns to default units
+        if not self.entry_M_0.get():
+            self.entry_M_0.insert(tk.END, "0.0")
+        if not self.entry_M_1.get():
+            self.entry_M_1.insert(tk.END, "2.0")
+        if not self.entry_T_0.get():
+            self.entry_T_0.insert(tk.END, "229.8")
+            self.entry_T_0_unit.set("K")
+        if not self.entry_P_0.get():
+            self.entry_P_0.insert(tk.END, "30.8")
+            self.entry_P_0_unit.set("kPa")
+        if not self.entry_T_t4.get():
+            self.entry_T_t4.insert(tk.END, "1670")
+            self.entry_T_t4_unit.set("K")
+        if not self.entry_P9rat.get():
+            self.entry_P9rat.insert(tk.END, "0.955")
 
     def on_closing(self):
         if messagebox.askyesno(title="Exit Application", message="Are you sure you want to exit?"):
             self.root.destroy()
 
 # Example usage
-if __name__ == "__main__":
-    root = tk.Tk()
-    gui = TurbojetGUI(root)
-    root.mainloop()
+#if __name__ == "__main__":
+#    root = tk.Tk()
+#    gui = TurbojetGUI(root)
+#    root.mainloop()
