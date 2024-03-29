@@ -2,6 +2,34 @@
 
 class UnitConversions:
     @staticmethod
+    def C_to_K(C):
+        """
+        Convert Celsius (°C) to Kelvin (K).
+        """
+        return C + 273.15
+
+    @staticmethod
+    def F_to_K(F):
+        """
+        Convert Fahrenheit (°F) to Kelvin (K).
+        """
+        return (F - 32) * 5 / 9 + 273.15
+
+    @staticmethod
+    def Pa_to_kPa(Pa):
+        """
+        Convert Pascals (Pa) to kilopascals (kPa).
+        """
+        return Pa / 1000
+
+    @staticmethod
+    def atm_to_kPa(atm):
+        """
+        Convert atmospheres (atm) to kilopascals (kPa).
+        """
+        return atm * 101.325
+    
+    @staticmethod
     def psia_to_Pa(psia):
         """
         Convert pounds per square inch absolute (psia) to Pascals (Pa).
@@ -58,13 +86,6 @@ class UnitConversions:
         return kgs * 2204.62
 
     @staticmethod
-    def C_to_K(C):
-        """
-        Convert Celsius (°C) to Kelvin (K).
-        """
-        return C + 273.15
-
-    @staticmethod
     def K_to_C(K):
         """
         Convert Kelvin (K) to Celsius (°C).
@@ -79,6 +100,13 @@ class UnitConversions:
         return R * 5 / 9
     
     @staticmethod
+    def meters_to_km(m):
+        """
+        Convert meters (m) to kilometers (km).
+        """
+        return m / 1000.0
+    
+    @staticmethod
     def meters_to_feet(m):
         """
         Convert meters (m) to feet (ft).
@@ -91,3 +119,10 @@ class UnitConversions:
         Convert feet (ft) to meters (m).
         """
         return f / 3.2808399
+    
+    @staticmethod
+    def feet_to_km(f):
+        """
+        Convert feet (ft) to kilometers (km).
+        """
+        return UnitConversions.feet_to_meters(f) / 1000.0
